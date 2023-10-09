@@ -4,7 +4,7 @@ import 'package:traxpense/components/indicator.dart';
 import 'package:traxpense/helpers/daily_expense.dart';
 // import 'package:traxpense/helpers/datename_helper.dart';
 import 'package:traxpense/helpers/expense_item.dart';
-// import 'package:logger/logger.dart';
+import 'package:logger/logger.dart';
 
 class ExpenseData extends ChangeNotifier {
   ExpenseItem emptyItem = ExpenseItem(
@@ -98,34 +98,49 @@ class ExpenseData extends ChangeNotifier {
     switch (range) {
       case "Daily":
         start = DateTime(startDate.year, startDate.month, startDate.day)
-            .subtract(const Duration(days: 1));
+            .subtract(const Duration(milliseconds: 1));
         end = DateTime(startDate.year, startDate.month, startDate.day)
             .add(const Duration(days: 1));
         break;
       case "Weekly":
-        start = startOfTheWeek().subtract(const Duration(days: 1));
-        end = startDate.add(const Duration(days: 1));
+        start = startOfTheWeek(
+                DateTime(startDate.year, startDate.month, startDate.day))
+            .subtract(const Duration(milliseconds: 1));
+        end = start
+            .add(const Duration(days: 7))
+            .add(const Duration(milliseconds: 1));
         break;
       case "Monthly":
         start = DateTime(startDate.year, startDate.month)
-            .subtract(const Duration(days: 1));
-        end = DateTime(startDate.year, startDate.month + 1);
+            .subtract(const Duration(milliseconds: 1));
+        end = DateTime(start.year, start.month + 2);
         break;
       case "Yearly":
-        start = DateTime(startDate.year).subtract(const Duration(days: 1));
-        end = DateTime(startDate.year + 1);
+        start =
+            DateTime(startDate.year).subtract(const Duration(milliseconds: 1));
+        end = DateTime(start.year + 2);
         break;
+      case "Custom":
+        start = startDate.subtract(const Duration(milliseconds: 1));
+        end = endDate!.add(const Duration(days: 1));
       default:
-        start = startDate.subtract(const Duration(days: 1));
+        start = startDate.subtract(const Duration(milliseconds: 1));
         end = startDate.add(const Duration(days: 1));
     }
-    // var logger = Logger();
-    // logger.d([start, end]);
-    for (var date in dailyExps.keys) {
-      if (date.isAfter(start) && date.isBefore(end)) {
-        ret.addAll([dailyExps[date]!]);
+    var logger = Logger();
+    logger.d([start, end]);
+
+    if (range != "Overall") {
+      for (var date in dailyExps.keys) {
+        if (date.isAfter(start) && date.isBefore(end)) {
+          ret.addAll([dailyExps[date]!]);
+        }
       }
+    } else {
+      ret.addAll(dailyExps.values);
     }
+
+    ret.sort((a, b) => b.date.compareTo(a.date));
 
     currentExpenseList.clear();
 
@@ -266,10 +281,10 @@ class ExpenseData extends ChangeNotifier {
   // }
 
   // get start of the week
-  DateTime startOfTheWeek() {
+  DateTime startOfTheWeek(DateTime today) {
     DateTime? startOfWeek;
 
-    DateTime today = DateTime.now();
+    // DateTime today = DateTime.now();
 
     for (int i = 0; i < 7; i++) {
       if (today.subtract(Duration(days: i)).weekday == 7) {
