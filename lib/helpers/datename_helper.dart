@@ -8,14 +8,6 @@ String converDateTimeToString(DateTime? dateTime) {
   String month = dateTime.month.toString();
 
   String day = dateTime.day.toString();
-  // ensure that monthe and day are both in two digits
-  // if (month.length == 1) {
-  //   month = month;
-  // }
-
-  // if (day.length == 1) {
-  //   day = day;
-  // }
 
   return "$year-$month-$day";
 }

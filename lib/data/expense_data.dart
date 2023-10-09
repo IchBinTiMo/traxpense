@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:traxpense/components/indicator.dart';
 import 'package:traxpense/data/database.dart';
 import 'package:traxpense/helpers/daily_expense.dart';
-// import 'package:traxpense/helpers/datename_helper.dart';
 import 'package:traxpense/helpers/expense_item.dart';
-// import 'package:logger/logger.dart';
 
 class ExpenseData extends ChangeNotifier {
   ExpenseItem emptyItem = ExpenseItem(
@@ -25,25 +23,12 @@ class ExpenseData extends ChangeNotifier {
 
   Map<String, double> summarySortByType = {};
 
-  // final db = ExpensesDataBase();
-
   PieChart chartSections = PieChart(
     PieChartData(
       centerSpaceRadius: 10,
       sections: [],
     ),
   );
-
-  // final Map<String, Color> colorList = {
-  //   "Food": const Color.fromARGB(255, 248, 132, 124),
-  //   "Clothing": const Color.fromARGB(255, 255, 189, 89),
-  //   "Housing": const Color.fromARGB(255, 255, 242, 127),
-  //   "Transportation": const Color.fromARGB(255, 138, 203, 140),
-  //   "Entertainment": const Color.fromARGB(255, 110, 186, 247),
-  //   "Health": const Color.fromARGB(255, 130, 142, 207),
-  //   "Education": const Color.fromARGB(255, 190, 114, 204),
-  //   "Others": const Color.fromARGB(255, 89, 144, 126)
-  // };
 
   final Map<String, Color> colorList = {
     "Food": const Color.fromARGB(166, 244, 67, 54),
@@ -55,17 +40,6 @@ class ExpenseData extends ChangeNotifier {
     "Health": const Color.fromARGB(166, 155, 39, 176),
     "Others": const Color.fromARGB(166, 85, 110, 130)
   };
-
-  // final Map<String, Color> colorList = {
-  //   "Food": Colors.red.shade300,
-  //   "Clothing": Colors.orange.shade300,
-  //   "Housing": Colors.yellow.shade300,
-  //   "Transportation": Colors.green.shade300,
-  //   "Entertainment": Colors.blue.shade300,
-  //   "Health": Colors.indigo.shade300,
-  //   "Education": Colors.purple.shade300,
-  //   "Others": Colors.blueGrey.shade300
-  // };
 
   List<ExpenseItem> getCurrentExpenseList() {
     return currentExpenseList;
@@ -80,20 +54,11 @@ class ExpenseData extends ChangeNotifier {
   }
 
   void loadDataFromDB(ExpensesDataBase db) {
-    // if (db.allExps.isNotEmpty) {
-    //   db.loadData();
-    // } else {
-    //   db.createInitialData();
-    // }
     dailyExps = db.allExps;
-    // var logger = Logger();
-    // logger.d([dailyExps]);
   }
 
   void getRequestExpenses(
       String range, DateTime startDate, DateTime? endDate, bool isPercentage) {
-    // initDailyExps();
-
     ret.clear();
     summarySortByType = {
       "Food": 0,
@@ -107,8 +72,6 @@ class ExpenseData extends ChangeNotifier {
     };
     DateTime start;
     DateTime end;
-    // DateTime today =
-    //     DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     switch (range) {
       case "Daily":
@@ -142,8 +105,6 @@ class ExpenseData extends ChangeNotifier {
         start = startDate.subtract(const Duration(milliseconds: 1));
         end = startDate.add(const Duration(days: 1));
     }
-    // var logger = Logger();
-    // logger.d([start, end]);
 
     if (range != "Overall") {
       for (var date in dailyExps.keys) {
@@ -174,44 +135,15 @@ class ExpenseData extends ChangeNotifier {
       if (summarySortByType.containsKey(type)) {
         double current = summarySortByType[type]!;
         current += amount;
-        // dailyExpenseSum[type] = current;
         summarySortByType[type] = current;
       } else {
         summarySortByType.addAll({type: amount});
       }
     }
 
-    // logger.d(summarySortByType);
-
     currentExpenseList.insert(0, emptyItem);
     chartSections = calculateChartSections(isPercentage);
-    // for (var exp in allExpenseList) {
-    //   String type = exp.type;
-    //   if (type == '') {
-    //     continue;
-    //   }
-    //   // String date = converDateTimeToString(exp.dateTime);
-    //   double amount = (exp.amount != "") ? double.parse(exp.amount) : 0.0;
-
-    //   if (dailyExpenseSum.containsKey(type)) {
-    //     double current = dailyExpenseSum[type]!;
-    //     current += amount;
-    //     dailyExpenseSum[type] = current;
-    //   } else {
-    //     dailyExpenseSum.addAll({type: amount});
-    //   }
-    // }
   }
-
-  // List<ExpenseItem> getAllExpenseList() {
-  //   // initDailyExps();
-  //   // List<ExpenseItem> ret = [];
-  //   // for (var date in dailyExps.keys) {
-  //   //   ret.addAll([dailyExps[date]!.expItems]);
-  //   // }
-  //   // return ret;
-  //   return allExpenseList;
-  // }
 
   void initDailyExps() {
     var year = DateTime.now().year;
@@ -230,8 +162,6 @@ class ExpenseData extends ChangeNotifier {
   void addNewExpense(ExpenseItem expenseItem, ExpensesDataBase db) {
     DateTime key = DateTime(expenseItem.dateTime!.year,
         expenseItem.dateTime!.month, expenseItem.dateTime!.day);
-
-    // List<ExpenseItem> exps;
 
     if (dailyExps.containsKey(key)) {
       dailyExps[key]!.expItems.insert(0, expenseItem);
@@ -256,11 +186,6 @@ class ExpenseData extends ChangeNotifier {
       dailyExps[key]!.summary[expenseItem.type] =
           double.parse(expenseItem.amount);
     }
-    // if (getCurrentExpenseList().isNotEmpty) {
-    //   allExpenseList.remove(getCurrentExpenseList()[0]);
-    // }
-    // allExpenseList.insert(0, expenseItem);
-    // allExpenseList.insert(0, emptyItem);
     notifyListeners();
     db.allExps = dailyExps;
     db.updateExpenses();
@@ -277,33 +202,9 @@ class ExpenseData extends ChangeNotifier {
     db.updateExpenses();
   }
 
-  // get day name
-  // String getDayName(DateTime dateTime) {
-  //   switch (dateTime.weekday) {
-  //     case 0:
-  //       return 'Sun';
-  //     case 1:
-  //       return 'Mon';
-  //     case 2:
-  //       return 'Tue';
-  //     case 3:
-  //       return 'Wed';
-  //     case 4:
-  //       return 'Thu';
-  //     case 5:
-  //       return 'Fri';
-  //     case 6:
-  //       return 'Sat';
-  //     default:
-  //       return '';
-  //   }
-  // }
-
   // get start of the week
   DateTime startOfTheWeek(DateTime today) {
     DateTime? startOfWeek;
-
-    // DateTime today = DateTime.now();
 
     for (int i = 0; i < 7; i++) {
       if (today.subtract(Duration(days: i)).weekday == 7) {
@@ -314,35 +215,6 @@ class ExpenseData extends ChangeNotifier {
 
     return startOfWeek!;
   }
-
-  // calculate daily expense
-  // Map<String, double> calculateDailyExpenseSum() {
-  // double sum = 0.0;
-  // for (var key in summarySortByType.keys) {
-  //   sum += summarySortByType[key]!;
-  // }
-  // return sum;
-  // Map<String, double> dailyExpenseSum = {};
-
-  // for (var exp in allExpenseList) {
-  //   String type = exp.type;
-  //   if (type == '') {
-  //     continue;
-  //   }
-  //   // String date = converDateTimeToString(exp.dateTime);
-  //   double amount = (exp.amount != "") ? double.parse(exp.amount) : 0.0;
-
-  //   if (dailyExpenseSum.containsKey(type)) {
-  //     double current = dailyExpenseSum[type]!;
-  //     current += amount;
-  //     dailyExpenseSum[type] = current;
-  //   } else {
-  //     dailyExpenseSum.addAll({type: amount});
-  //   }
-  // }
-
-  // return dailyExpenseSum;
-  // }
 
   double calculateTotalExpense() {
     double totalExpense = 0.0;
@@ -356,9 +228,6 @@ class ExpenseData extends ChangeNotifier {
       "Education",
       "Others"
     ]) {
-      // if (calculateDailyExpenseSum().containsKey(type)) {
-      //   totalExpense += calculateDailyExpenseSum()[type]!;
-      // }
       if (summarySortByType.containsKey(type)) {
         totalExpense += summarySortByType[type]!;
       } else {
@@ -424,8 +293,6 @@ class ExpenseData extends ChangeNotifier {
 
   List<Indicator> getIndicators() {
     List<Indicator> indicators = [];
-    // var logger = Logger();
-    // logger.d(getSummarySortByType());
     for (var type in [
       "Food",
       "Clothing",
@@ -436,7 +303,6 @@ class ExpenseData extends ChangeNotifier {
       "Health",
       "Others"
     ]) {
-      // logger.d(type);
       if (getSummarySortByType()[type]! > 0.0) {
         indicators.add(Indicator(
           color: colorList[type]!,
@@ -451,8 +317,6 @@ class ExpenseData extends ChangeNotifier {
   }
 
   PieChart calculateChartSections(bool isPercentage) {
-    // var logger = Logger();
-    // logger.d(getSummarySortByType());
     List<PieChartSectionData> chartSections = [];
     num total = calculateTotalExpense();
     for (var type in [

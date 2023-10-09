@@ -1,4 +1,3 @@
-// import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
@@ -7,19 +6,13 @@ import 'package:traxpense/components/dialog_box.dart';
 import 'package:traxpense/components/expense_tile.dart';
 import 'package:traxpense/components/my_datepicker.dart';
 import 'package:traxpense/components/my_dropdownbutton.dart';
-// import 'package:traxpense/components/my_dropdownbutton.dart';
 import 'package:traxpense/components/my_piechart.dart';
 import 'package:traxpense/data/expense_data.dart';
 import 'package:traxpense/data/database.dart';
 import 'package:traxpense/data/theme_provider.dart';
-// import 'package:traxpense/helpers/daily_expense.dart';
-// import 'package:traxpense/helpers/datename_helper.dart';
 import 'package:traxpense/helpers/expense_item.dart';
-// import 'package:radial_button/widget/circle_floating_button.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:traxpense/theme/theme.dart';
-// import 'package:after_layout/after_layout.dart';
-// import 'package:fl_chart/fl_chart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -55,24 +48,11 @@ class _HomePageState extends State<HomePage> {
 
   bool isPercentage = false;
 
-  // int startYear = DateTime.now().year;
-  // int startMonth = DateTime.now().month;
-  // int startDay = DateTime.now().day;
-
-  // int endYear = DateTime.now().year;
-  // int endMonth = DateTime.now().month;
-  // int endDay = DateTime.now().day;
-
   DateTime startForRange = DateTime.now();
   DateTime endForRange = DateTime.now();
 
   final _myBox = Hive.box("expense_db");
   ExpensesDataBase db = ExpensesDataBase();
-
-  // final Stream<DateTime> dateStream = Stream<DateTime>.periodic(
-  //   const Duration(seconds: 1),
-  //   (count) => DateTime.now(),
-  // );
 
   @override
   void initState() {
@@ -83,20 +63,9 @@ class _HomePageState extends State<HomePage> {
     } else {
       db.createInitialData();
     }
-    // var logger = Logger();
-    // logger.d(db.themeNow);
-    // Provider.of<ThemeProvider>(context, listen: false).themeData = db.themeNow;
-
-    // Provider.of<ExpenseData>(context, listen: false).dailyExps = db.allExps;
-    // Provider.of<ThemeProvider>(context, listen: false).themeData = db.themeNow;
 
     super.initState();
   }
-
-  // @override
-  // void afterFirstLayout(BuildContext context) {
-  //   Provider.of<ThemeProvider>(context, listen: false).loadThemeFromDB(db);
-  // }
 
   void addNewExpense() {
     showDialog(
@@ -193,8 +162,6 @@ class _HomePageState extends State<HomePage> {
   ListView getExpenseListView(ExpenseData expenseData) {
     String rangeType = selectedRangeTypeController.value;
     if (rangeType != "Custom") {
-      // var logger = Logger();
-      // logger.d(rangeType);
       expenseData.getRequestExpenses(
           rangeType, selectedDate, null, isPercentage);
     } else {
@@ -250,19 +217,6 @@ class _HomePageState extends State<HomePage> {
     return title;
   }
 
-  // Future<void> _selectDateRange(BuildContext context) async {
-  //   // final DateTimeRange? pickedDateRange = await showDateRangePicker(
-  //   //   context: context,
-  //   //   firstDate: DateTime(2000),
-  //   //   lastDate: DateTime(2100),
-  //   // );
-
-  //   // if (pickedDateRange != null && pickedDateRange != selectedDateRange) {
-  //   //   setState(() {
-  //   //     selectedDateRange = pickedDateRange;
-  //   //   });
-  //   // }
-  // }
   Future<void> _selectDateRange(BuildContext context) async {
     await showDialog(
         context: context,
@@ -274,7 +228,6 @@ class _HomePageState extends State<HomePage> {
                 child: Text("Select Date Range"),
               ),
               content: SizedBox(
-                // height: 200,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -303,19 +256,6 @@ class _HomePageState extends State<HomePage> {
                       selectedMonth: endMonthController,
                       selectedDay: endDayController,
                     ),
-                    // SizedBox(
-                    //   width: 50,
-                    //   child: CupertinoPicker(
-                    //     itemExtent: 20,
-                    //     onSelectedItemChanged: (index) {},
-                    //     children: [1, 2, 3, 4, 5, 2023]
-                    //         .map((e) => Text(
-                    //               e.toString(),
-                    //             ))
-                    //         .toList(),
-                    //   ),
-                    // )
-                    // CupertinoDatePicker(onDateTimeChanged: onDateTimeChanged)
                   ],
                 ),
               ),
@@ -351,17 +291,6 @@ class _HomePageState extends State<HomePage> {
                 MaterialButton(onPressed: cancel, child: const Text("Cancel"))
               ]);
         });
-    // final DateTimeRange? pickedDateRange = await showDateRangePicker(
-    //   context: context,
-    //   firstDate: DateTime(2000),
-    //   lastDate: DateTime(2100),
-    // );
-
-    // if (pickedDateRange != null && pickedDateRange != selectedDateRange) {
-    //   setState(() {
-    //     selectedDateRange = pickedDateRange;
-    //   });
-    // }
   }
 
   @override
@@ -410,57 +339,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        //     CircleFloatingButton.floatingActionButton(
-        //   items: [
-        //     FloatingActionButton(
-        //       foregroundColor: Theme.of(context).colorScheme.background,
-        //       onPressed: addNewExpense,
-        //       backgroundColor: Theme.of(context).colorScheme.primary,
-        //       child: const Icon(Icons.add),
-        //     ),
-        //     FloatingActionButton(
-        //       foregroundColor: Theme.of(context).colorScheme.background,
-        //       backgroundColor: Theme.of(context).colorScheme.primary,
-        //       onPressed: () {},
-        //       child: const Icon(Icons.sunny),
-        //     ),
-        //     FloatingActionButton(
-        //       foregroundColor: Theme.of(context).colorScheme.background,
-        //       backgroundColor: Theme.of(context).colorScheme.primary,
-        //       onPressed: () {},
-        //       child: const Icon(Icons.sunny),
-        //     )
-        //   ],
-        //   duration: const Duration(milliseconds: 200),
-        //   icon: Icons.settings,
-        //   color: Theme.of(context).colorScheme.primary,
-        //   curveAnim: Curves.ease,
-        //   useOpacity: false,
-        // ),
         body: ListView(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Padding(
-                //   padding: const EdgeInsets.only(top: 10),
-                //   child: TextButton(
-                //       onPressed: () {
-                //         // selectedDayController.value--;
-                //         setState(() {
-                //           selectedDate =
-                //               selectedDate.subtract(const Duration(days: 1));
-                //           selectedYearController.value = selectedDate.year;
-                //           selectedMonthController.value = selectedDate.month;
-                //           selectedDayController.value = selectedDate.day;
-                //         });
-                //         // selectedDate =
-                //         //     selectedDate.subtract(const Duration(days: 1));
-                //         // var logger = Logger();
-                //         // logger.d(selectedDayController.value);
-                //       },
-                //       child: const Icon(Icons.keyboard_arrow_left)),
-                // ),
                 SizedBox(
                   // height: 40,
                   width: 250,
@@ -478,25 +361,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.only(top: 10),
-                //   child: TextButton(
-                //       onPressed: () {
-                //         // selectedDayController.value--;
-                //         setState(() {
-                //           selectedDate =
-                //               selectedDate.add(const Duration(days: 1));
-                //           selectedYearController.value = selectedDate.year;
-                //           selectedMonthController.value = selectedDate.month;
-                //           selectedDayController.value = selectedDate.day;
-                //         });
-                //         // selectedDate =child
-                //         //     selectedDate.subtract(const Duration(days: 1));
-                //         // var logger = Logger();
-                //         // logger.d(selectedDayController.value);
-                //       },
-                //       child: const Icon(Icons.keyboard_arrow_right)),
-                // ),
               ],
             ),
             SizedBox(
@@ -509,11 +373,7 @@ class _HomePageState extends State<HomePage> {
             const Padding(padding: EdgeInsets.only(bottom: 10)),
             SizedBox(
               height: MediaQuery.of(context).size.height - 470,
-              child: Container(
-                  // decoration: BoxDecoration(
-                  //   color: Theme.of(context).colorScheme.primary,
-                  // ),
-                  child: getExpenseListView(expenseData)),
+              child: Container(child: getExpenseListView(expenseData)),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -523,7 +383,6 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.only(top: 0),
                         child: TextButton(
                             onPressed: () {
-                              // selectedDayController.value--;
                               setState(() {
                                 if (rangeType == "Daily") {
                                   selectedDate = selectedDate
@@ -566,10 +425,6 @@ class _HomePageState extends State<HomePage> {
                                     selectedDate.month;
                                 selectedDayController.value = selectedDate.day;
                               });
-                              // selectedDate =
-                              //     selectedDate.subtract(const Duration(days: 1));
-                              // var logger = Logger();
-                              // logger.d(selectedDayController.value);
                             },
                             child: const Icon(Icons.keyboard_arrow_left)),
                       )
@@ -611,7 +466,6 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.only(top: 0),
                         child: TextButton(
                             onPressed: () {
-                              // selectedDayController.value--;
                               setState(() {
                                 if (rangeType == "Daily") {
                                   selectedDate =
@@ -654,10 +508,6 @@ class _HomePageState extends State<HomePage> {
                                     selectedDate.month;
                                 selectedDayController.value = selectedDate.day;
                               });
-                              // selectedDate =
-                              //     selectedDate.subtract(const Duration(days: 1));
-                              // var logger = Logger();
-                              // logger.d(selectedDayController.value);
                             },
                             child: const Icon(Icons.keyboard_arrow_right)),
                       )

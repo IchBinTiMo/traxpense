@@ -18,23 +18,3 @@ class ExpenseItem extends HiveObject {
       required this.amount,
       required this.dateTime});
 }
-
-// class ExpenseItemAdapter extends TypeAdapter<ExpenseItem> {
-//   @override
-//   final typeId = 0;
-
-//   @override
-//   ExpenseItem read(BinaryReader reader) {
-//     return ExpenseItem(
-//       type: reader.readString(),
-//       name: reader.readString(),
-//       amount: reader.readString(),
-//       dateTime: reader.read(),
-//     );
-//   }
-
-//   @override
-//   void write(BinaryWriter writer, ExpenseItem obj) {
-//     writer.write(obj);
-//   }
-// }
