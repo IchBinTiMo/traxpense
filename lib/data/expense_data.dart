@@ -76,7 +76,8 @@ class ExpenseData extends ChangeNotifier {
     return chartSections;
   }
 
-  void getRequestExpenses(String range, DateTime startDate, DateTime? endDate) {
+  void getRequestExpenses(
+      String range, DateTime startDate, DateTime? endDate, bool isPercentage) {
     // initDailyExps();
 
     ret.clear();
@@ -169,7 +170,7 @@ class ExpenseData extends ChangeNotifier {
     // logger.d(summarySortByType);
 
     currentExpenseList.insert(0, emptyItem);
-    chartSections = calculateChartSections();
+    chartSections = calculateChartSections(isPercentage);
     // for (var exp in allExpenseList) {
     //   String type = exp.type;
     //   if (type == '') {
@@ -431,10 +432,11 @@ class ExpenseData extends ChangeNotifier {
     return indicators;
   }
 
-  PieChart calculateChartSections() {
+  PieChart calculateChartSections(bool isPercentage) {
     // var logger = Logger();
     // logger.d(getSummarySortByType());
     List<PieChartSectionData> chartSections = [];
+    num total = calculateTotalExpense();
     for (var type in [
       "Food",
       "Clothing",
@@ -446,11 +448,26 @@ class ExpenseData extends ChangeNotifier {
       "Others"
     ]) {
       if (getSummarySortByType().containsKey(type)) {
+        num tmp = ((getSummarySortByType()[type] ?? 0) /
+                (total > 0 ? total : 1) *
+                1000)
+            .round();
         chartSections.add(PieChartSectionData(
-          color: colorList[type]!,
-          value: getSummarySortByType()[type] ?? 0,
-          radius: 110,
-        ));
+            color: colorList[type]!,
+            value: isPercentage
+                ? (getSummarySortByType()[type] ?? 0) /
+                    (total > 0 ? total : 1) *
+                    100
+                : getSummarySortByType()[type] ?? 0,
+            title: isPercentage
+                ? "${(tmp / 10) % 1 == 0 ? tmp ~/ 10 : (tmp / 10)}%"
+                : (getSummarySortByType()[type] ?? 0) % 1 == 0
+                    ? (getSummarySortByType()[type] ?? 0).toInt().toString()
+                    : getSummarySortByType()[type]?.toString(),
+            radius: 110,
+            titleStyle: const TextStyle(
+              fontSize: 20,
+            )));
       }
     }
 

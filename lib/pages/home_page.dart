@@ -50,6 +50,8 @@ class _HomePageState extends State<HomePage> {
 
   String rangeType = "Daily";
 
+  bool isPercentage = false;
+
   // int startYear = DateTime.now().year;
   // int startMonth = DateTime.now().month;
   // int startDay = DateTime.now().day;
@@ -170,9 +172,11 @@ class _HomePageState extends State<HomePage> {
     if (rangeType != "Custom") {
       var logger = Logger();
       logger.d(rangeType);
-      expenseData.getRequestExpenses(rangeType, selectedDate, null);
+      expenseData.getRequestExpenses(
+          rangeType, selectedDate, null, isPercentage);
     } else {
-      expenseData.getRequestExpenses(rangeType, startForRange, endForRange);
+      expenseData.getRequestExpenses(
+          rangeType, startForRange, endForRange, isPercentage);
     }
 
     List<ExpenseItem> expsFromRes = expenseData.getCurrentExpenseList();
@@ -373,9 +377,13 @@ class _HomePageState extends State<HomePage> {
               foregroundColor: Theme.of(context).colorScheme.background,
               backgroundColor: Theme.of(context).colorScheme.primary,
               onTap: () {
-                _selectDateRange(context);
+                setState(() {
+                  isPercentage = !isPercentage;
+                });
               },
-              child: const Icon(Icons.tiktok),
+              child: isPercentage
+                  ? const Icon(Icons.tag)
+                  : const Icon(Icons.percent),
             ),
           ],
         ),
@@ -471,8 +479,9 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 320,
               child: MyPieChart(
-                  totalAmount: expenseData.calculateTotalExpense(),
-                  chartSections: expenseData.getChartSections()),
+                totalAmount: expenseData.calculateTotalExpense(),
+                chartSections: expenseData.getChartSections(),
+              ),
             ),
             const Padding(padding: EdgeInsets.only(bottom: 10)),
             SizedBox(
