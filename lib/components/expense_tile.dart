@@ -51,7 +51,7 @@ class ExpenseTile extends StatelessWidget {
                 child: Slidable(
                   endActionPane: ActionPane(
                     extentRatio: 0.25,
-                    motion: const ScrollMotion(),
+                    motion: const BehindMotion(),
                     children: [
                       SlidableAction(
                         onPressed: deleteExpense,
@@ -85,7 +85,7 @@ class ExpenseTile extends StatelessWidget {
                 child: Slidable(
                   endActionPane: ActionPane(
                     extentRatio: 0.25,
-                    motion: const ScrollMotion(),
+                    motion: const BehindMotion(),
                     children: [
                       SlidableAction(
                         onPressed: addExpense,

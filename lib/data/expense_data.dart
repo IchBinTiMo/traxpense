@@ -1,10 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:traxpense/components/indicator.dart';
+import 'package:traxpense/data/database.dart';
 import 'package:traxpense/helpers/daily_expense.dart';
 // import 'package:traxpense/helpers/datename_helper.dart';
 import 'package:traxpense/helpers/expense_item.dart';
-import 'package:logger/logger.dart';
+// import 'package:logger/logger.dart';
 
 class ExpenseData extends ChangeNotifier {
   ExpenseItem emptyItem = ExpenseItem(
@@ -23,6 +24,8 @@ class ExpenseData extends ChangeNotifier {
   List<DailyExpense> ret = [];
 
   Map<String, double> summarySortByType = {};
+
+  // final db = ExpensesDataBase();
 
   PieChart chartSections = PieChart(
     PieChartData(
@@ -74,6 +77,17 @@ class ExpenseData extends ChangeNotifier {
 
   PieChart getChartSections() {
     return chartSections;
+  }
+
+  void loadDataFromDB(ExpensesDataBase db) {
+    // if (db.allExps.isNotEmpty) {
+    //   db.loadData();
+    // } else {
+    //   db.createInitialData();
+    // }
+    dailyExps = db.allExps;
+    // var logger = Logger();
+    // logger.d([dailyExps]);
   }
 
   void getRequestExpenses(
@@ -128,8 +142,8 @@ class ExpenseData extends ChangeNotifier {
         start = startDate.subtract(const Duration(milliseconds: 1));
         end = startDate.add(const Duration(days: 1));
     }
-    var logger = Logger();
-    logger.d([start, end]);
+    // var logger = Logger();
+    // logger.d([start, end]);
 
     if (range != "Overall") {
       for (var date in dailyExps.keys) {
@@ -213,7 +227,7 @@ class ExpenseData extends ChangeNotifier {
   }
 
   // add new expense
-  void addNewExpense(ExpenseItem expenseItem) {
+  void addNewExpense(ExpenseItem expenseItem, ExpensesDataBase db) {
     DateTime key = DateTime(expenseItem.dateTime!.year,
         expenseItem.dateTime!.month, expenseItem.dateTime!.day);
 
@@ -248,15 +262,19 @@ class ExpenseData extends ChangeNotifier {
     // allExpenseList.insert(0, expenseItem);
     // allExpenseList.insert(0, emptyItem);
     notifyListeners();
+    db.allExps = dailyExps;
+    db.updateExpenses();
   }
 
   // delete expense
-  void deleteExpense(ExpenseItem expenseItem) {
+  void deleteExpense(ExpenseItem expenseItem, ExpensesDataBase db) {
     DateTime key = DateTime(expenseItem.dateTime!.year,
         expenseItem.dateTime!.month, expenseItem.dateTime!.day);
     dailyExps[key]!.expItems.remove(expenseItem);
     currentExpenseList.remove(expenseItem);
     notifyListeners();
+    db.allExps = dailyExps;
+    db.updateExpenses();
   }
 
   // get day name

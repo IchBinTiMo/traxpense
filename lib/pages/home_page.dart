@@ -1,5 +1,6 @@
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:traxpense/components/dialog_box.dart';
@@ -9,6 +10,7 @@ import 'package:traxpense/components/my_dropdownbutton.dart';
 // import 'package:traxpense/components/my_dropdownbutton.dart';
 import 'package:traxpense/components/my_piechart.dart';
 import 'package:traxpense/data/expense_data.dart';
+import 'package:traxpense/data/database.dart';
 import 'package:traxpense/data/theme_provider.dart';
 // import 'package:traxpense/helpers/daily_expense.dart';
 // import 'package:traxpense/helpers/datename_helper.dart';
@@ -16,6 +18,7 @@ import 'package:traxpense/helpers/expense_item.dart';
 // import 'package:radial_button/widget/circle_floating_button.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:traxpense/theme/theme.dart';
+// import 'package:after_layout/after_layout.dart';
 // import 'package:fl_chart/fl_chart.dart';
 
 class HomePage extends StatefulWidget {
@@ -63,19 +66,37 @@ class _HomePageState extends State<HomePage> {
   DateTime startForRange = DateTime.now();
   DateTime endForRange = DateTime.now();
 
-  final Stream<DateTime> dateStream = Stream<DateTime>.periodic(
-    const Duration(seconds: 1),
-    (count) => DateTime.now(),
-  );
+  final _myBox = Hive.box("expense_db");
+  ExpensesDataBase db = ExpensesDataBase();
+
+  // final Stream<DateTime> dateStream = Stream<DateTime>.periodic(
+  //   const Duration(seconds: 1),
+  //   (count) => DateTime.now(),
+  // );
 
   @override
   void initState() {
-    // Provider.of<ExpenseData>(context, listen: false)
-    //     .allExpenseList
-    //     .insert(0, emptyItem);
-    // Provider.of<ExpenseData>(context, listen: false).initDailyExps();
+    if (_myBox.get("expensesByDay") != null) {
+      db.loadData();
+      Provider.of<ExpenseData>(context, listen: false).loadDataFromDB(db);
+      Provider.of<ThemeProvider>(context, listen: false).loadThemeFromDB(db);
+    } else {
+      db.createInitialData();
+    }
+    // var logger = Logger();
+    // logger.d(db.themeNow);
+    // Provider.of<ThemeProvider>(context, listen: false).themeData = db.themeNow;
+
+    // Provider.of<ExpenseData>(context, listen: false).dailyExps = db.allExps;
+    // Provider.of<ThemeProvider>(context, listen: false).themeData = db.themeNow;
+
     super.initState();
   }
+
+  // @override
+  // void afterFirstLayout(BuildContext context) {
+  //   Provider.of<ThemeProvider>(context, listen: false).loadThemeFromDB(db);
+  // }
 
   void addNewExpense() {
     showDialog(
@@ -119,7 +140,8 @@ class _HomePageState extends State<HomePage> {
     );
 
     // add new expense
-    Provider.of<ExpenseData>(context, listen: false).addNewExpense(expenseItem);
+    Provider.of<ExpenseData>(context, listen: false)
+        .addNewExpense(expenseItem, db);
 
     // close dialog
     Navigator.of(context).pop();
@@ -140,7 +162,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void deleteExpense(ExpenseItem expenseItem) {
-    Provider.of<ExpenseData>(context, listen: false).deleteExpense(expenseItem);
+    Provider.of<ExpenseData>(context, listen: false)
+        .deleteExpense(expenseItem, db);
   }
 
   String getWeekday(int day) {
@@ -170,8 +193,8 @@ class _HomePageState extends State<HomePage> {
   ListView getExpenseListView(ExpenseData expenseData) {
     String rangeType = selectedRangeTypeController.value;
     if (rangeType != "Custom") {
-      var logger = Logger();
-      logger.d(rangeType);
+      // var logger = Logger();
+      // logger.d(rangeType);
       expenseData.getRequestExpenses(
           rangeType, selectedDate, null, isPercentage);
     } else {
@@ -365,7 +388,7 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               onTap: () {
                 Provider.of<ThemeProvider>(context, listen: false)
-                    .toggleTheme();
+                    .toggleTheme(db);
               },
               child: Provider.of<ThemeProvider>(context, listen: false)
                           .themeData !=
