@@ -44,6 +44,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   shared_preferences: ^2.2.1
+  syncfusion_flutter_datepicker: ^23.1.40
 
 
 dev_dependencies:
