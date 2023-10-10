@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-// import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-// import 'package:traxpense/components/dialog_box.dart';
 import 'package:traxpense/components/expense_tile.dart';
-// import 'package:traxpense/components/my_datepicker.dart';
 import 'package:traxpense/components/my_dropdownbutton.dart';
 import 'package:traxpense/components/my_piechart.dart';
 import 'package:traxpense/data/expense_data.dart';
@@ -48,7 +45,6 @@ class _HomePageState extends State<HomePage> {
 
   DateTime selectedDate = DateTime.now();
   DateTimeRange? selectedDateRange;
-  // String selectedDateString = "";
 
   String rangeType = "Daily";
 
@@ -70,26 +66,10 @@ class _HomePageState extends State<HomePage> {
       db.createInitialData();
     }
     selectedDateController.selectedDate = DateTime.now();
-    // selectedDateString =
-    //     "${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}";
     super.initState();
   }
 
   void addNewExpense() {
-    // showDialog(
-    //   context: context,
-    //   builder: (context) {
-    //     return DialogBox(
-    //         newExpNameController: newExpNameController,
-    //         newExpAmountController: newExpAmountController,
-    //         selectedTypeController: selectedTypeController,
-    //         selectedDateController: selectedDateController,
-    //         allEventDays: Provider.of<ExpenseData>(context, listen: false)
-    //             .getAllEventDates(),
-    //         save: save,
-    //         cancel: cancel);
-    //   },
-    // );
     showDialog(
       context: context,
       builder: (context) {
@@ -101,7 +81,6 @@ class _HomePageState extends State<HomePage> {
                 child: Text("Add New Expense"),
               ),
               content: SizedBox(
-                // height: 200,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -127,7 +106,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     MyDropdownButton(items: const [
-                      // "",
                       "Food",
                       "Clothing",
                       "Housing",
@@ -166,8 +144,6 @@ class _HomePageState extends State<HomePage> {
                                             selectedDate.month;
                                         selectedDayController.value =
                                             selectedDate.day;
-                                        // var logger = Logger();
-                                        // logger.d(selectedDate);
                                       });
                                       setStateInDialog(() {
                                         rangeType = "Daily";
@@ -181,9 +157,6 @@ class _HomePageState extends State<HomePage> {
                                         selectedDayController.value =
                                             selectedDate.day;
                                       });
-                                      // selectedDateString =
-                                      //     "${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}";
-                                      // logger.d(selectedDateString);
                                       Navigator.of(context).pop();
                                     },
                                     view: DateRangePickerView.month,
@@ -229,11 +202,6 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                           "${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}"),
                     )
-                    // MyDatePicker(
-                    //   selectedYear: selectedYearController,
-                    //   selectedMonth: selectedMonthController,
-                    //   selectedDay: selectedDayController,
-                    // ),
                   ],
                 ),
               ),
@@ -249,12 +217,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void save() {
-    // var logger = Logger();
-    // logger.d([
-    //   selectedYearController.value,
-    //   selectedMonthController.value,
-    //   selectedDayController.value
-    // ]);
     // validate
     if (newExpNameController.text.isEmpty ||
         newExpAmountController.text.isEmpty ||
@@ -401,16 +363,10 @@ class _HomePageState extends State<HomePage> {
                   height: 300,
                   width: 800,
                   child: SfDateRangePicker(
-                    // controller: gotoDateController,
                     selectionMode: DateRangePickerSelectionMode.range,
                     initialSelectedDate: DateTime.now(),
                     initialDisplayDate: selectedDate,
                     onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                      // var logger = Logger();
-                      // logger.d(
-                      //     dateRangePickerSelectionChangedArgs.value.startDate);
-                      // logger
-                      //     .d(dateRangePickerSelectionChangedArgs.value.endDate);
                       final DateTime? start =
                           dateRangePickerSelectionChangedArgs.value.startDate;
                       final DateTime? end =
@@ -439,41 +395,6 @@ class _HomePageState extends State<HomePage> {
                         }
                       });
                     },
-                    // onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                    //   var logger = Logger();
-                    //   logger.d(dateRangePickerSelectionChangedArgs.value);
-                    //   // logger.d(gotoDateController.selectedDates);
-                    //   setState(() {
-                    //     // rangeType = "Daily";
-                    //     // selectedDate =
-                    //     //     dateRangePickerSelectionChangedArgs.value;
-                    //     // selectedYearController.value =
-                    //     //     selectedDate.year;
-                    //     // selectedMonthController.value =
-                    //     //     selectedDate.month;
-                    //     // selectedDayController.value = selectedDate.day;
-                    //     startYearController.value =
-                    //         dateRangePickerSelectionChangedArgs
-                    //             .value.startDate.year;
-                    //     startMonthController.value =
-                    //         dateRangePickerSelectionChangedArgs
-                    //             .value.startDate.month;
-                    //     startDayController.value =
-                    //         dateRangePickerSelectionChangedArgs
-                    //             .value.startDate.day;
-
-                    //     endYearController.value =
-                    //         dateRangePickerSelectionChangedArgs
-                    //             .value.endDate.year;
-                    //     endMonthController.value =
-                    //         dateRangePickerSelectionChangedArgs
-                    //             .value.endDate.month;
-                    //     endDayController.value =
-                    //         dateRangePickerSelectionChangedArgs
-                    //             .value.endDate.day;
-                    //   });
-                    //   Navigator.of(context).pop();
-                    // },
                     view: DateRangePickerView.month,
                     maxDate: DateTime.now(),
                     todayHighlightColor: Theme.of(context).colorScheme.tertiary,
@@ -497,36 +418,6 @@ class _HomePageState extends State<HomePage> {
                           color: Theme.of(context).colorScheme.secondary,
                         )),
                   ),
-                  // child: Column(
-                  //   mainAxisSize: MainAxisSize.min,
-                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //   children: [
-                  //     const Row(
-                  //       mainAxisAlignment: MainAxisAlignment.start,
-                  //       children: [
-                  //         Text("Start Date: "),
-                  //       ],
-                  //     ),
-                  //     const Padding(padding: EdgeInsets.only(bottom: 12)),
-                  //     MyDatePicker(
-                  //       selectedYear: startYearController,
-                  //       selectedMonth: startMonthController,
-                  //       selectedDay: startDayController,
-                  //     ),
-                  //     const Row(
-                  //       mainAxisAlignment: MainAxisAlignment.start,
-                  //       children: [
-                  //         Text("End Date: "),
-                  //       ],
-                  //     ),
-                  //     const Padding(padding: EdgeInsets.only(bottom: 12)),
-                  //     MyDatePicker(
-                  //       selectedYear: endYearController,
-                  //       selectedMonth: endMonthController,
-                  //       selectedDay: endDayController,
-                  //     ),
-                  //   ],
-                  // ),
                 ),
                 actions: [
                   // save button
@@ -622,14 +513,9 @@ class _HomePageState extends State<HomePage> {
                           height: 300,
                           width: 800,
                           child: SfDateRangePicker(
-                            // controller: gotoDateController,
                             initialDisplayDate: selectedDate,
                             onSelectionChanged:
                                 (dateRangePickerSelectionChangedArgs) {
-                              // var logger = Logger();
-                              // logger
-                              //     .d(dateRangePickerSelectionChangedArgs.value);
-                              // logger.d(gotoDateController.selectedDate);
                               setState(() {
                                 rangeType = "Daily";
                                 selectedRangeTypeController.value = rangeType;
@@ -674,32 +560,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     });
-                // final result =
-
-                // final result = await showDatePicker(
-                //   context: context,
-                //   initialDate: selectedDate,
-                //   firstDate: DateTime(1950),
-                //   lastDate: DateTime.now(),
-                //   builder: (context, child) {
-                //     return Theme(
-                //       data: Theme.of(context)
-                //           .copyWith(colorScheme: Theme.of(context).colorScheme),
-                //       child: child!,
-                //     );
-                //   },
-                // );
-                // var logger = Logger();
-                // logger.d(result);
-                // if (result != null) {
-                //   setState(() {
-                //     rangeType = "Daily";
-                //     selectedDate = result;
-                //     selectedYearController.value = selectedDate.year;
-                //     selectedMonthController.value = selectedDate.month;
-                //     selectedDayController.value = selectedDate.day;
-                //   });
-                // }
               },
               child: const Text("TP"),
             ),
@@ -711,11 +571,9 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  // height: 40,
                   width: 250,
                   child: Center(
                     child: Padding(
-                      // padding: const EdgeInsets.all(8.0),
                       padding: const EdgeInsets.only(top: 20),
                       child: Text(
                         getTitle(expenseData),

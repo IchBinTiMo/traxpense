@@ -59,8 +59,6 @@ class ExpenseData extends ChangeNotifier {
 
   List<DateTime> getAllEventDates() {
     return dailyExps.keys.toList();
-    // .where((element) => dailyExps[element]!.expItems.isNotEmpty)
-    // .toList();
   }
 
   void getRequestExpenses(
