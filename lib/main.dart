@@ -35,7 +35,6 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: Provider.of<ThemeProvider>(context).themeData,
           themeAnimationDuration: Duration.zero,
-          // theme: theme == "light" ? lightMode : darkMode,
           home: const HomePage(),
         ),
       ),
