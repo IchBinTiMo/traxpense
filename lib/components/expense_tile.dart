@@ -32,7 +32,6 @@ class ExpenseTile extends StatelessWidget {
           bottom: expIndex == expLength! ? 2 : 1),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
-        // borderRadius: BorderRadius.circular(10),
       ),
       child: Container(
         decoration: BoxDecoration(

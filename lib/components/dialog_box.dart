@@ -76,19 +76,6 @@ class DialogBox extends StatelessWidget {
                 selectedMonth: selectedMonthController,
                 selectedDay: selectedDayController,
               ),
-              // SizedBox(
-              //   width: 50,
-              //   child: CupertinoPicker(
-              //     itemExtent: 20,
-              //     onSelectedItemChanged: (index) {},
-              //     children: [1, 2, 3, 4, 5, 2023]
-              //         .map((e) => Text(
-              //               e.toString(),
-              //             ))
-              //         .toList(),
-              //   ),
-              // )
-              // CupertinoDatePicker(onDateTimeChanged: onDateTimeChanged)
             ],
           ),
         ),

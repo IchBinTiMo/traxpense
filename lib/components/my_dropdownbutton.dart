@@ -27,19 +27,10 @@ class MyDropdownButton extends StatelessWidget {
                   onChanged?.call();
                   return;
                 }
-                // if (newValue == "Custom") {
-                //   selectedItem.value = newValue!;
-                //   onChanged?.call();
-                //   return;
-                // }
                 selectedItem.value = "Today";
                 onChanged?.call();
                 return;
               },
-              // icon: Icon(
-              //   Icons.arrow_drop_down,
-              //   color: Theme.of(context).colorScheme.background,
-              // ),
               iconSize: items[0] == "Daily" ? 0 : 24,
               dropdownColor: Theme.of(context).colorScheme.background,
               items: items.map((String item) {
