@@ -37,13 +37,11 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider:
   flutter_slidable: ^1.2.0
-  radial_button: ^1.0.1
   fl_chart: ^0.63.0
   flutter_speed_dial: ^7.0.0
   logger: ^1.0.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  shared_preferences: ^2.2.1
   syncfusion_flutter_datepicker: ^23.1.40
 
 
