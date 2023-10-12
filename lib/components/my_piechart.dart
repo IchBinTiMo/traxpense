@@ -23,7 +23,6 @@ class MyPieChart extends StatelessWidget {
                 children: [
                   const Padding(
                     padding: EdgeInsets.only(
-                      // top: 40,
                       left: 20,
                     ),
                     child: Text(

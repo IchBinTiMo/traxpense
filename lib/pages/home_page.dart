@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:traxpense/components/dialog_box.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:traxpense/components/expense_tile.dart';
-import 'package:traxpense/components/my_datepicker.dart';
 import 'package:traxpense/components/my_dropdownbutton.dart';
 import 'package:traxpense/components/my_piechart.dart';
 import 'package:traxpense/data/expense_data.dart';
@@ -41,6 +39,10 @@ class _HomePageState extends State<HomePage> {
   final endMonthController = ValueNotifier(DateTime.now().month);
   final endDayController = ValueNotifier(DateTime.now().day);
 
+  final gotoDateController = DateRangePickerController();
+
+  final selectedDateController = DateRangePickerController();
+
   DateTime selectedDate = DateTime.now();
   DateTimeRange? selectedDateRange;
 
@@ -63,33 +65,158 @@ class _HomePageState extends State<HomePage> {
     } else {
       db.createInitialData();
     }
-
+    selectedDateController.selectedDate = DateTime.now();
     super.initState();
   }
 
   void addNewExpense() {
     showDialog(
-        context: context,
-        builder: (context) {
-          return DialogBox(
-              newExpNameController: newExpNameController,
-              newExpAmountController: newExpAmountController,
-              selectedTypeController: selectedTypeController,
-              selectedYearController: selectedYearController,
-              selectedMonthController: selectedMonthController,
-              selectedDayController: selectedDayController,
-              save: save,
-              cancel: cancel);
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setStateInDialog) {
+          return AlertDialog(
+              backgroundColor: Theme.of(context).colorScheme.background,
+              title: const SizedBox(
+                height: 20,
+                child: Text("Add New Expense"),
+              ),
+              content: SizedBox(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // expense name
+                    SizedBox(
+                      height: 20,
+                      child: TextField(
+                        controller: newExpNameController,
+                        decoration: const InputDecoration(
+                          hintText: "Expense Name",
+                          hintStyle: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                    // expense amount
+                    TextField(
+                      controller: newExpAmountController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        hintText: "Expense amount",
+                        hintStyle: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    MyDropdownButton(items: const [
+                      "Food",
+                      "Clothing",
+                      "Housing",
+                      "Transportation",
+                      "Education",
+                      "Entertainment",
+                      "Health",
+                      "Others"
+                    ], selectedItem: selectedTypeController),
+                    MaterialButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.background,
+                                title: const Text("Select Date"),
+                                content: SizedBox(
+                                  height: 300,
+                                  width: 800,
+                                  child: SfDateRangePicker(
+                                    initialSelectedDate: DateTime.now(),
+                                    initialDisplayDate:
+                                        selectedDateController.selectedDate,
+                                    onSelectionChanged:
+                                        (dateRangePickerSelectionChangedArgs) {
+                                      setState(() {
+                                        rangeType = "Daily";
+                                        selectedDate =
+                                            dateRangePickerSelectionChangedArgs
+                                                .value;
+                                        selectedYearController.value =
+                                            selectedDate.year;
+                                        selectedMonthController.value =
+                                            selectedDate.month;
+                                        selectedDayController.value =
+                                            selectedDate.day;
+                                      });
+                                      setStateInDialog(() {
+                                        rangeType = "Daily";
+                                        selectedDate =
+                                            dateRangePickerSelectionChangedArgs
+                                                .value;
+                                        selectedYearController.value =
+                                            selectedDate.year;
+                                        selectedMonthController.value =
+                                            selectedDate.month;
+                                        selectedDayController.value =
+                                            selectedDate.day;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    view: DateRangePickerView.month,
+                                    maxDate: DateTime.now(),
+                                    todayHighlightColor:
+                                        Theme.of(context).colorScheme.tertiary,
+                                    monthViewSettings:
+                                        DateRangePickerMonthViewSettings(
+                                      showWeekNumber: true,
+                                      specialDates: Provider.of<ExpenseData>(
+                                              context,
+                                              listen: false)
+                                          .getAllEventDates(),
+                                    ),
+                                    monthCellStyle:
+                                        DateRangePickerMonthCellStyle(
+                                            textStyle: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
+                                            specialDatesDecoration:
+                                                BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .background,
+                                              border: Border.all(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            disabledDatesTextStyle: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                            )),
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                      child: Text(
+                          "${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}"),
+                    )
+                  ],
+                ),
+              ),
+              actions: [
+                // save button
+                MaterialButton(onPressed: save, child: const Text("Save")),
+                // cancel button
+                MaterialButton(onPressed: cancel, child: const Text("Cancel"))
+              ]);
         });
+      },
+    );
   }
 
   void save() {
-    var logger = Logger();
-    logger.d([
-      selectedYearController.value,
-      selectedMonthController.value,
-      selectedDayController.value
-    ]);
     // validate
     if (newExpNameController.text.isEmpty ||
         newExpAmountController.text.isEmpty ||
@@ -217,79 +344,113 @@ class _HomePageState extends State<HomePage> {
     return title;
   }
 
+  String getSelectedDate() {
+    return "${selectedDate.year} - ${selectedDate.month} - ${selectedDate.day}";
+  }
+
   Future<void> _selectDateRange(BuildContext context) async {
     await showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.background,
-              title: const SizedBox(
-                height: 40,
-                child: Text("Select Date Range"),
-              ),
-              content: SizedBox(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text("Start Date: "),
-                      ],
-                    ),
-                    const Padding(padding: EdgeInsets.only(bottom: 12)),
-                    MyDatePicker(
-                      selectedYear: startYearController,
-                      selectedMonth: startMonthController,
-                      selectedDay: startDayController,
-                    ),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text("End Date: "),
-                      ],
-                    ),
-                    const Padding(padding: EdgeInsets.only(bottom: 12)),
-                    MyDatePicker(
-                      selectedYear: endYearController,
-                      selectedMonth: endMonthController,
-                      selectedDay: endDayController,
-                    ),
-                  ],
+          return StatefulBuilder(builder: (context, setStateInDialog) {
+            return AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.background,
+                title: const SizedBox(
+                  height: 40,
+                  child: Text("Select Date Range"),
                 ),
-              ),
-              actions: [
-                // save button
-                MaterialButton(
-                    onPressed: () {
+                content: SizedBox(
+                  height: 300,
+                  width: 800,
+                  child: SfDateRangePicker(
+                    selectionMode: DateRangePickerSelectionMode.range,
+                    initialSelectedDate: DateTime.now(),
+                    initialDisplayDate: selectedDate,
+                    onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
+                      final DateTime? start =
+                          dateRangePickerSelectionChangedArgs.value.startDate;
+                      final DateTime? end =
+                          dateRangePickerSelectionChangedArgs.value.endDate;
                       setState(() {
-                        startForRange = DateTime(
-                          startYearController.value,
-                          startMonthController.value,
-                          startDayController.value,
-                        );
-                        endForRange = DateTime(
-                          endYearController.value,
-                          endMonthController.value,
-                          endDayController.value,
-                        );
+                        if (start != null && end != null) {
+                          startYearController.value =
+                              dateRangePickerSelectionChangedArgs
+                                  .value.startDate.year;
+                          startMonthController.value =
+                              dateRangePickerSelectionChangedArgs
+                                  .value.startDate.month;
+                          startDayController.value =
+                              dateRangePickerSelectionChangedArgs
+                                  .value.startDate.day;
+
+                          endYearController.value =
+                              dateRangePickerSelectionChangedArgs
+                                  .value.endDate.year;
+                          endMonthController.value =
+                              dateRangePickerSelectionChangedArgs
+                                  .value.endDate.month;
+                          endDayController.value =
+                              dateRangePickerSelectionChangedArgs
+                                  .value.endDate.day;
+                        }
                       });
-
-                      Navigator.of(context).pop();
-
-                      startYearController.value = DateTime.now().year;
-                      startMonthController.value = DateTime.now().month;
-                      startDayController.value = DateTime.now().day;
-
-                      endYearController.value = DateTime.now().year;
-                      endMonthController.value = DateTime.now().month;
-                      endDayController.value = DateTime.now().day;
                     },
-                    child: const Text("Save")),
-                // cancel button
-                MaterialButton(onPressed: cancel, child: const Text("Cancel"))
-              ]);
+                    view: DateRangePickerView.month,
+                    maxDate: DateTime.now(),
+                    todayHighlightColor: Theme.of(context).colorScheme.tertiary,
+                    monthViewSettings: DateRangePickerMonthViewSettings(
+                      showWeekNumber: true,
+                      specialDates:
+                          Provider.of<ExpenseData>(context, listen: false)
+                              .getAllEventDates(),
+                    ),
+                    monthCellStyle: DateRangePickerMonthCellStyle(
+                        textStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        specialDatesDecoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.background,
+                          border: Border.all(
+                              color: Theme.of(context).colorScheme.primary),
+                          shape: BoxShape.circle,
+                        ),
+                        disabledDatesTextStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        )),
+                  ),
+                ),
+                actions: [
+                  // save button
+                  MaterialButton(
+                      onPressed: () {
+                        setState(() {
+                          startForRange = DateTime(
+                            startYearController.value,
+                            startMonthController.value,
+                            startDayController.value,
+                          );
+                          endForRange = DateTime(
+                            endYearController.value,
+                            endMonthController.value,
+                            endDayController.value,
+                          );
+                        });
+
+                        Navigator.of(context).pop();
+
+                        startYearController.value = DateTime.now().year;
+                        startMonthController.value = DateTime.now().month;
+                        startDayController.value = DateTime.now().day;
+
+                        endYearController.value = DateTime.now().year;
+                        endMonthController.value = DateTime.now().month;
+                        endDayController.value = DateTime.now().day;
+                      },
+                      child: const Text("Save")),
+                  // cancel button
+                  MaterialButton(onPressed: cancel, child: const Text("Cancel"))
+                ]);
+          });
         });
   }
 
@@ -337,6 +498,71 @@ class _HomePageState extends State<HomePage> {
                   ? const Icon(Icons.tag)
                   : const Icon(Icons.percent),
             ),
+            SpeedDialChild(
+              foregroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                        title: const Text("Go to"),
+                        content: SizedBox(
+                          height: 300,
+                          width: 800,
+                          child: SfDateRangePicker(
+                            initialDisplayDate: selectedDate,
+                            onSelectionChanged:
+                                (dateRangePickerSelectionChangedArgs) {
+                              setState(() {
+                                rangeType = "Daily";
+                                selectedRangeTypeController.value = rangeType;
+                                selectedDate =
+                                    dateRangePickerSelectionChangedArgs.value;
+                                selectedYearController.value =
+                                    selectedDate.year;
+                                selectedMonthController.value =
+                                    selectedDate.month;
+                                selectedDayController.value = selectedDate.day;
+                              });
+                              Navigator.of(context).pop();
+                            },
+                            view: DateRangePickerView.month,
+                            maxDate: DateTime.now(),
+                            todayHighlightColor:
+                                Theme.of(context).colorScheme.tertiary,
+                            monthViewSettings: DateRangePickerMonthViewSettings(
+                              showWeekNumber: true,
+                              specialDates: Provider.of<ExpenseData>(context,
+                                      listen: false)
+                                  .getAllEventDates(),
+                            ),
+                            monthCellStyle: DateRangePickerMonthCellStyle(
+                                textStyle: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                specialDatesDecoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).colorScheme.background,
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                  shape: BoxShape.circle,
+                                ),
+                                disabledDatesTextStyle: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                )),
+                          ),
+                        ),
+                      );
+                    });
+              },
+              child: const Text("TP"),
+            ),
           ],
         ),
         body: ListView(
@@ -345,11 +571,9 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  // height: 40,
                   width: 250,
                   child: Center(
                     child: Padding(
-                      // padding: const EdgeInsets.all(8.0),
                       padding: const EdgeInsets.only(top: 20),
                       child: Text(
                         getTitle(expenseData),
@@ -442,8 +666,6 @@ class _HomePageState extends State<HomePage> {
                     selectedItem: selectedRangeTypeController,
                     onChanged: () {
                       setState(() {
-                        var logger = Logger();
-                        logger.d(rangeType);
                         rangeType = selectedRangeTypeController.value;
                         if (rangeType == "Custom") {
                           _selectDateRange(context);
@@ -451,7 +673,6 @@ class _HomePageState extends State<HomePage> {
                         }
                         if (rangeType == "Today") {
                           selectedDate = DateTime.now();
-                          logger.d(selectedDate);
                           selectedRangeTypeController.value = "Daily";
                           rangeType = selectedRangeTypeController.value;
                           selectedYearController.value = selectedDate.year;

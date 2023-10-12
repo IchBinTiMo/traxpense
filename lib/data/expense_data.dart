@@ -57,6 +57,10 @@ class ExpenseData extends ChangeNotifier {
     dailyExps = db.allExps;
   }
 
+  List<DateTime> getAllEventDates() {
+    return dailyExps.keys.toList();
+  }
+
   void getRequestExpenses(
       String range, DateTime startDate, DateTime? endDate, bool isPercentage) {
     ret.clear();
@@ -196,6 +200,9 @@ class ExpenseData extends ChangeNotifier {
     DateTime key = DateTime(expenseItem.dateTime!.year,
         expenseItem.dateTime!.month, expenseItem.dateTime!.day);
     dailyExps[key]!.expItems.remove(expenseItem);
+    if (dailyExps[key]!.expItems.isEmpty) {
+      dailyExps.remove(key);
+    }
     currentExpenseList.remove(expenseItem);
     notifyListeners();
     db.allExps = dailyExps;

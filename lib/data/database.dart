@@ -1,5 +1,4 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:logger/logger.dart';
 import 'package:traxpense/helpers/daily_expense.dart';
 
 class ExpensesDataBase {
@@ -27,8 +26,6 @@ class ExpensesDataBase {
 
   // update the theme
   void updateTheme() {
-    var logger = Logger();
-    logger.d(themeNow);
     _myBox.put("theme", themeNow);
   }
 }
