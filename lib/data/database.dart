@@ -15,8 +15,12 @@ class ExpensesDataBase {
 
   // load the data from database
   void loadData() {
-    allExps = Map<DateTime, DailyExpense>.from(_myBox.get("expensesByDay"));
-    themeNow = _myBox.get("theme");
+    if (_myBox.get("expensesByDay") != null) {
+      allExps = Map<DateTime, DailyExpense>.from(_myBox.get("expensesByDay"));
+    }
+    if (_myBox.get("theme") != null) {
+      themeNow = _myBox.get("theme");
+    }
   }
 
   // update the database

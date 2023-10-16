@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "487833251797",
+    "project_id": "traxpense-17d6b",
+    "storage_bucket": "traxpense-17d6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487833251797:android:3833f2010a26d6ce55d75c",
+        "android_client_info": {
+          "package_name": "com.example.traxpense"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuv_yxobi17VX9uGyUnXYCk73MusMlHnc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:traxpense/components/indicator.dart';
 import 'package:traxpense/data/database.dart';
 import 'package:traxpense/helpers/daily_expense.dart';
 import 'package:traxpense/helpers/expense_item.dart';
+import 'package:traxpense/helpers/object_converter.dart';
+import 'package:traxpense/services/firestore_service.dart';
 
 class ExpenseData extends ChangeNotifier {
   ExpenseItem emptyItem = ExpenseItem(
@@ -30,6 +34,10 @@ class ExpenseData extends ChangeNotifier {
     ),
   );
 
+  var oc = ObjectConverter();
+
+  final user = FirebaseAuth.instance.currentUser!;
+
   final Map<String, Color> colorList = {
     "Food": const Color.fromARGB(166, 244, 67, 54),
     "Clothing": const Color.fromARGB(166, 255, 153, 0),
@@ -53,8 +61,9 @@ class ExpenseData extends ChangeNotifier {
     return chartSections;
   }
 
-  void loadDataFromDB(ExpensesDataBase db) {
-    dailyExps = db.allExps;
+  void loadDataFromDB(ExpensesDataBase db) async {
+    final tmp = await FirestoreService().getUserExps();
+    dailyExps = oc.fireStoreMapToDailyExpenses(tmp.data()!["dailyExpenses"]);
   }
 
   List<DateTime> getAllEventDates() {
@@ -163,14 +172,15 @@ class ExpenseData extends ChangeNotifier {
   }
 
   // add new expense
-  void addNewExpense(ExpenseItem expenseItem, ExpensesDataBase db) {
+  void addNewExpense(ExpenseItem expenseItem, ExpensesDataBase db) async {
     DateTime key = DateTime(expenseItem.dateTime!.year,
         expenseItem.dateTime!.month, expenseItem.dateTime!.day);
 
     if (dailyExps.containsKey(key)) {
       dailyExps[key]!.expItems.insert(0, expenseItem);
       dailyExps[key]!.summary[expenseItem.type] =
-          double.parse(expenseItem.amount);
+          dailyExps[key]!.summary[expenseItem.type]! +
+              double.parse(expenseItem.amount);
     } else {
       dailyExps[key] = DailyExpense(
         date: key,
@@ -191,22 +201,32 @@ class ExpenseData extends ChangeNotifier {
           double.parse(expenseItem.amount);
     }
     notifyListeners();
-    db.allExps = dailyExps;
-    db.updateExpenses();
+
+    await FirebaseFirestore.instance.collection("User").doc(user.uid).set({
+      "uid": user.uid,
+      "email": user.email,
+      "dailyExpenses": oc.dailyExpensesToFireStoreMap(dailyExps),
+    });
   }
 
   // delete expense
-  void deleteExpense(ExpenseItem expenseItem, ExpensesDataBase db) {
+  void deleteExpense(ExpenseItem expenseItem, ExpensesDataBase db) async {
     DateTime key = DateTime(expenseItem.dateTime!.year,
         expenseItem.dateTime!.month, expenseItem.dateTime!.day);
     dailyExps[key]!.expItems.remove(expenseItem);
+    dailyExps[key]!.summary[expenseItem.type] =
+        dailyExps[key]!.summary[expenseItem.type]! -
+            double.parse(expenseItem.amount);
     if (dailyExps[key]!.expItems.isEmpty) {
       dailyExps.remove(key);
     }
     currentExpenseList.remove(expenseItem);
     notifyListeners();
-    db.allExps = dailyExps;
-    db.updateExpenses();
+    await FirebaseFirestore.instance.collection("User").doc(user.uid).set({
+      "uid": user.uid,
+      "email": user.email,
+      "dailyExpenses": oc.dailyExpensesToFireStoreMap(dailyExps),
+    });
   }
 
   // get start of the week

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>487833251797-hm74oove3vegcajkh9e16vc2nvf0fk1u.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.487833251797-hm74oove3vegcajkh9e16vc2nvf0fk1u</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD31JwzZH1q64iibaGkwCskeZBlRTtxvfk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>487833251797</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.traxpense</string>
+	<key>PROJECT_ID</key>
+	<string>traxpense-17d6b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>traxpense-17d6b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:487833251797:ios:d7c91a77cfa1481955d75c</string>
+</dict>
+</plist>
