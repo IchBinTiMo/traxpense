@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:traxpense/components/expense_tile.dart';
@@ -12,8 +11,6 @@ import 'package:traxpense/data/database.dart';
 import 'package:traxpense/data/theme_provider.dart';
 import 'package:traxpense/helpers/expense_item.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:traxpense/helpers/object_converter.dart';
-import 'package:traxpense/services/firestore_service.dart';
 import 'package:traxpense/theme/theme.dart';
 
 class HomePage extends StatefulWidget {
@@ -68,25 +65,11 @@ class _HomePageState extends State<HomePage> {
         Provider.of<ThemeProvider>(context, listen: false).loadThemeFromDB(db);
       }
       Provider.of<ExpenseData>(context, listen: false).loadDataFromDB(db);
-      var logger = Logger();
-      logger.d("here");
     } else {
       db.createInitialData();
     }
     selectedDateController.selectedDate = DateTime.now();
     super.initState();
-  }
-
-  void test() async {
-    var logger = Logger();
-    var oc = ObjectConverter();
-    final tmp = await FirestoreService().getUserExps();
-    logger.d(tmp.data()!["email"]);
-    logger.d(oc
-        .fireStoreMapToDailyExpenses(
-            tmp.data()!["dailyExpenses"])[DateTime.parse("2023-10-17")]!
-        .expItems[0]
-        .amount);
   }
 
   // sign user out
