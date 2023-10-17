@@ -361,7 +361,8 @@ class ExpenseData extends ChangeNotifier {
                 (total > 0 ? total : 1) *
                 1000)
             .round();
-        chartSections.add(PieChartSectionData(
+        chartSections.add(
+          PieChartSectionData(
             color: colorList[type]!,
             value: isPercentage
                 ? (getSummarySortByType()[type] ?? 0) /
@@ -376,7 +377,9 @@ class ExpenseData extends ChangeNotifier {
             radius: 110,
             titleStyle: const TextStyle(
               fontSize: 20,
-            )));
+            ),
+          ),
+        );
       }
     }
 

@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:logger/logger.dart';
 import 'package:traxpense/helpers/daily_expense.dart';
 import 'package:traxpense/helpers/object_converter.dart';
 
 class AuthService {
-  // var logger = Logger();
   // google sign in method
   signInWithGoogle() async {
     // begin interactive sign in process
@@ -48,7 +46,6 @@ class AuthService {
           .collection("User")
           .doc(userCredential.user!.uid)
           .get();
-      // logger.d(tmp.data() == null);
       if (tmp.data() == null) {
         await FirebaseFirestore.instance
             .collection("User")
